@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="components/loader.js"></script>
+  <script src="lib/angular/angular.min.js"></script>
+  <script src="lib/onsenui/js/onsenui.min.js"></script>
+  <script src="lib/onsenui/js/angular-onsenui.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="components/app.js"></script>
+
+  <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script>
+    ons.bootstrap()
+      .controller('AppController', function($scope) {
+        this.load = function(page) {
+          $scope.splitter.content.load(page);
+          $scope.splitter.left.close();
+        };
+        this.toggle = function() {
+          $scope.splitter.left.toggle();
+        };
+      });
+
+    ons.ready(function() {
+        console.log("Onsen UI is ready!");
+  });
+  </script>
+</head>
+<body>
+<ons-dialog cancelable>
+  This dialog can be cancelled!
+</ons-dialog>
+
+  <ons-splitter ng-controller="AppController as app" var="splitter">
+    <ons-splitter-side side="left" width="220px" collapse>
+      <ons-page>
+        <ons-list>
+          <ons-list-item ng-click="app.load('home.html')" tappable>
+            Home
+          </ons-list-item>
+          <ons-list-item ng-click="app.load('settings.html')" tappable>
+            Settings
+          </ons-list-item>
+          <ons-list-item ng-click="app.load('about.html')" tappable>
+            About
+          </ons-list-item>
+        </ons-list>
+      </ons-page>
+    </ons-splitter-side>
+    <ons-splitter-content page="home.html"></ons-splitter-content>
+  </ons-splitter>
+
+  <ons-template id="home.html">
+    <ons-page id="home">
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button ng-click="app.toggle()">
+            <ons-icon icon="md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          Byteball CashBack Helper
+        </div>
+      </ons-toolbar>
+      <p style="text-align: left; opacity: 0.6; padding-top: 20px;">
+      <table>
+  	    <tbody>
+  		    <tr>
+			      <td><ons-input id="partner" modifier="material" disabled="true">partner</ons-input></td>
+			      <td></td>
+		      </tr>
+		      <tr>
+			      <td><ons-input id="partner_key" modifier="material" disabled="true">partner key</ons-input></td>
+		      	<td></td>
+		      </tr>
+		      <tr>
+			      <td><ons-input id="customer" modifier="material">customer</ons-input></td>
+			      <td><ons-icon icon="qrcode" size="2x"  onclick="get_qrcode('customer')"></ons-icon></td>
+          </tr>
+          <tr>
+            <td><ons-input id="order_id" modifier="material">order_id</ons-input><br></td>
+            <td><ons-icon icon="qrcode" size="2x"  onclick="get_qrcode('order_id')"></ons-icon></td>
+          </tr>
+          <tr>
+            <td><ons-input id="description" modifier="material">order description</ons-input></td>
+            <td><ons-icon icon="qrcode" size="2x"  onclick="get_qrcode('description')"></ons-icon></td>
+          </tr>
+          <tr>
+            <td><ons-input id="merchant" modifier="material">merchant (optional)</ons-input></td>
+            <td><ons-icon icon="qrcode" size="2x"  onclick="get_qrcode('merchant')"></ons-icon></td>
+          </tr>
+          <tr>
+            <td><ons-input id="address" modifier="material">customer Byteball address or email address</ons-input></td>
+            <td><ons-icon icon="qrcode" size="2x"  onclick="get_qrcode('address')"></ons-icon></td>
+          </tr>
+          <tr>
+            <td><ons-input id="currency_amount" modifier="material" type="number">purchase amount</td>
+            <td><select id="currency">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="JPY">JPY</option>
+          <option value="RUR">RUR</option>
+          <option value="GBYTE">bytes</option>
+          <option value="BTC">BTC</option>
+        </select></td>
+          </tr>
+          <tr>
+            <td><ons-input id="partner_cashback_percentage" modifier="material" type="number">partner cashback percentage (optional)</ons-input></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><ons-input id="unitaddress" modifier="material">purchase unit (if paid in GBYTE)</ons-input></td>
+            <td><ons-icon icon="qrcode" size="2x" onclick="get_qrcode('unitaddress')" ></ons-icon></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+          <ons-button id="push-button" onclick="postrequest()">Send</ons-button>
+      </p>
+      <p>
+          <ons-button id="push-button" onclick="clearall()">Clear</ons-button>
+      </p>
+      Result<br>
+      <textarea class="textarea" rows="3" placeholder="" id="answer"></textarea>
+      
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="settings.html">
+    <ons-page id="settings">
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button ng-click="app.toggle()">
+            <ons-icon icon="md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          Settings
+        </div>
+      </ons-toolbar>
+       <p style="text-align: left; opacity: 0.6; padding-top: 20px;">
+       partner<ons-input id="setting_partner" modifier="underbar"></ons-input><br>
+       partner_key<ons-input id="setting_partner_key" modifier="underbar"></ons-input><br>
+       network
+       <select id="network">
+          <option value="https://byte.money/new_purchase">MainNet</option>
+          <option value="https://byte.money/test/new_purchase">TestNet</option>
+        </select>
+      <p>
+        <ons-button id="push-button" onclick="savesetting()">save</ons-button>
+      </p>
+       </p>
+    </ons-page>
+  </ons-template>
+
+  <ons-template id="about.html">
+    <ons-page>
+      <ons-toolbar>
+        <div class="left">
+          <ons-toolbar-button ng-click="app.toggle()">
+            <ons-icon icon="md-menu"></ons-icon>
+          </ons-toolbar-button>
+        </div>
+        <div class="center">
+          About
+        </div>
+      </ons-toolbar>
+      This is an application to help send requests by Bytebnall cashback.<br>
+      In other words, it is an application for store employees.<br>
+      <br>
+      Byteball is crypto currency.<br>
+      <br>
+      For more information on Byteball please visit the official page.<br>
+      <a href="https://byteball.org">https://byteball.org</a><br>
+      <br>
+      For details on Byteball CashbackProgram,<br>
+      Please check from the following page.<br>
+      <a href="https://medium.com/byteball/byteball-cashback-program-9c717b8d3173">https://medium.com/byteball/byteball-cashback-program-9c717b8d3173</a><br>
+      <br>
+      <b>Author</b><br>
+      yamaoka<br>
+      twitter:@Yamaoka_btc<br>
+      <br>
+      <b>Donation</b><br>
+      Byteball
+      XMQNWJJ2XKHXWMGOAPAY7S75LBYFRRDV<br>
+      Quick Donation link:[<a href="byteball:XMQNWJJ2XKHXWMGOAPAY7S75LBYFRRDV?amount=1000000&asset=base">1MB</a>]  [<a href="byteball:XMQNWJJ2XKHXWMGOAPAY7S75LBYFRRDV?amount=10000000&asset=base">10MB</a>]  [<a href="byteball:XMQNWJJ2XKHXWMGOAPAY7S75LBYFRRDV?amount=100000000&asset=base">100MB</a>]  [<a href="byteball:XMQNWJJ2XKHXWMGOAPAY7S75LBYFRRDV?amount=10000000000&asset=base">1GB</a>]<br>
+      <br>
+      Ethereum<br>
+      0x67Cb97c0989321D13573AB24D0fceD22830aDEFE<br>
+    </ons-page>
+  </ons-template>
+</body>
+</html>
